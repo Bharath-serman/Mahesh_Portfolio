@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { FiPlay, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
 import { useState, useRef } from "react";
+import { getVideoUrl } from "@/utils/media";
 
 export default function VideoShowcase() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -118,7 +119,7 @@ export default function VideoShowcase() {
 
           <video
             ref={videoRef}
-            src="/videos/showreel.mp4"
+            src={getVideoUrl("/videos/showreel.mp4")}
             autoPlay
             muted={isMuted}
             controls

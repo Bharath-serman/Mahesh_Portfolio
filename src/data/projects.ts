@@ -114,7 +114,7 @@ export const categories: ProjectCategory[] = [
     id: "rigging",
     title: "Rigging & Animation",
     description: "Character rigs & animation work",
-    icon: "⟡",
+    icon: "⟠",
     color: "text-orange-400",
     projectCount: 3,
     projects: [
@@ -133,7 +133,7 @@ export const categories: ProjectCategory[] = [
         description:
           "Created and rigged original characters with idle, walk, and interaction animations while ensuring smooth integration into a real-time VR educational environment.",
         tags: ["Character Rigging", "VR", "Walk Cycle", "Advanced Rigging"],
-        status: "COMPLETED",
+        status: "IN PROGRESS",
       },
       {
         id: "facial-rig",
@@ -144,31 +144,31 @@ export const categories: ProjectCategory[] = [
         video: "/videos/MetaHuman_FaceAnimation.mp4",
         status: "COMPLETED",
       },
+      {
+        id: "facial-details",
+        title: "Facial Animation",
+        description:
+          "Blend shape based facial rig with viseme support and corrective shape in close up view.",
+        tags: ["Maya", "Blend Shapes", "Facial Animation"],
+        video: "/videos/Eye_Close_up_Shot.mp4",
+        status: "COMPLETED",
+      },
     ],
   },
   {
     id: "Storytelling",
     title: "Storytelling",
     description: "Storytelling and cinematic works.",
-    icon: "⟡",
+    icon: "S",
     color: "text-red-400",
     projectCount: 3,
     projects: [
-      {
-        id: "A Father's Silent Sacrifice",
-        title: "A Father's Silent Sacrifice",
-        description:
-          "Produced cinematic character animations, camera performances, and storytelling sequences while managing the complete animation workflow from concept to final render.",
-        tags: ["Character Animation", "Cinematics", "Storytelling", "Rendering"],
-        video: "projects/rigging/jackd-storytelling.mp4",
-        status: "COMPLETED",
-      },
       {
         id: "Sister's Paperscript",
         title: "Sister's Paperscript",
         description:
           "An innocent message from my little sister exposed a shocking secret.",
-        tags: [ "Video", "Writing", "Storytelling"],
+        tags: ["Video", "Writing", "Storytelling"],
         video: "/videos/Sister_PaperScript_Final_Render.mp4",
         status: "COMPLETED",
       },
@@ -183,8 +183,73 @@ export const categories: ProjectCategory[] = [
       },
     ],
   },
+  {
+    id: "LevelDesign",
+    title: "Level Design",
+    description: "Level design works.",
+    icon: "★",
+    color: "text-violet-400",
+    projectCount: 3,
+    projects: [
+      {
+        id: "Castle on a cliff",
+        title: "Castle on a cliff.",
+        description:
+          "A Castle preserved in time up on the cliff.",
+        tags: ["Unreal Engine", "Level Design", "Environment Design"],
+        video: "/videos/Castle Cliff Environment.mp4",
+        status: "COMPLETED",
+      },
+      {
+        id: "Dark GraveYard!",
+        title: "Dark GraveYard!",
+        description:
+          "A horror-themed environment art project focusing on atmosphere, lighting, and environment tone.",
+        tags: ["Level Design", "Environment Design"],
+        video: "/videos/GraveYard_video.mp4",
+        status: "COMPLETED",
+      },
+    ],
+  },
+  {
+    id: "ShortContents",
+    title: "Short Contents",
+    description: "Short Content works.",
+    icon: "⟡",
+    color: "text-cyan-400",
+    projectCount: 3,
+    projects: [
+      {
+        id: "Cool_Porsche",
+        title: "Cool Porsche.",
+        description:
+          "A Porsche 911 GT3.",
+        tags: ["Unreal Engine", "Camera Animation", "Super Car"],
+        video: "/videos/Porshe Car.mov",
+        status: "COMPLETED",
+      },
+      {
+        id: "Chikiri Dance",
+        title: "Chikiri Dance",
+        description:
+          "Video capture cleanup of an indian classical dance performed by characters.",
+        tags: ["Short content", "Camera Animation"],
+        video: "/videos/Chikiri_Dance_VIdeo.mp4",
+        status: "COMPLETED",
+      },
+      {
+        id: "Super Car",
+        title: "Super Car",
+        description:
+          "A Super Car in middle of the forest environment.",
+        tags: ["Short content", "Camera Animation", "Super Car"],
+        video: "/videos/SuperCar.mp4",
+        status: "COMPLETED",
+      },
+    ],
+  },
 ];
 
 export function getCategoryById(id: string): ProjectCategory | undefined {
-  return categories.find((cat) => cat.id === id);
+  return categories.find((cat) => cat.id.toLowerCase() === id.toLowerCase());
 }

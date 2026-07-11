@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import { FiPlay, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
+import { getVideoUrl } from "@/utils/media";
 
 export default function ProjectCategoryPage({
   category,
@@ -109,13 +110,12 @@ export default function ProjectCategoryPage({
                     [{String(index + 1).padStart(2, "0")}]
                   </span>
                   <span
-                    className={`text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 ${
-                      project.status === "COMPLETED"
+                    className={`text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 ${project.status === "COMPLETED"
                         ? "text-accent"
                         : project.status === "IN PROGRESS"
-                        ? "text-yellow-400"
-                        : "text-accent-3"
-                    }`}
+                          ? "text-yellow-400"
+                          : "text-accent-3"
+                      }`}
                   >
                     {project.status}
                   </span>
@@ -123,7 +123,7 @@ export default function ProjectCategoryPage({
 
                 <div className="absolute top-3 right-3">
                   <span className="text-[10px] font-mono text-zinc-500 bg-black/60 px-2 py-0.5 rounded">
-                    {project.year}
+                    {project.status}
                   </span>
                 </div>
 
@@ -169,11 +169,10 @@ export default function ProjectCategoryPage({
               <Link
                 key={cat.id}
                 href={`/projects/${cat.id}`}
-                className={`block px-3 py-2.5 rounded font-mono text-xs transition-all duration-200 ${
-                  cat.id === category.id
+                className={`block px-3 py-2.5 rounded font-mono text-xs transition-all duration-200 ${cat.id === category.id
                     ? `${cat.color} bg-current/10 border-l-2 border-current`
                     : "text-zinc-500 hover:text-white hover:bg-zinc-800/50 border-l-2 border-transparent"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{cat.icon}</span>
@@ -232,7 +231,7 @@ export default function ProjectCategoryPage({
 
             <video
               ref={videoRef}
-              src={activeVideo.url}
+              src={getVideoUrl(activeVideo.url)}
               autoPlay
               muted={isMuted}
               controls
