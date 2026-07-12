@@ -1,25 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiPlay, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
-import { useState, useRef } from "react";
-import { getVideoUrl } from "@/utils/media";
+import { FiPlay, FiX } from "react-icons/fi";
+import { useState } from "react";
+
+const YOUTUBE_ID = "s31ngQ17NxU";
 
 export default function VideoShowcase() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-  };
-
-  const closeVideo = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-    setIsPlaying(false);
-  };
 
   return (
     <section className="w-full">
@@ -45,9 +33,14 @@ export default function VideoShowcase() {
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
         className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer border border-zinc-800 hover:border-accent/50 transition-all duration-500"
-        onClick={handlePlay}
+        onClick={() => setIsPlaying(true)}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-800" />
+        <img
+          src={`https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`}
+          alt="Showreel thumbnail"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <div className="w-24 h-24 rounded-full border-2 border-accent/40 flex items-center justify-center bg-black/40 group-hover:border-accent group-hover:bg-accent/10 group-hover:scale-110 transition-all duration-500">
@@ -89,27 +82,11 @@ export default function VideoShowcase() {
           animate={{ opacity: 1 }}
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
         >
-          <div className="absolute inset-0 scanline opacity-10" />
-
           <button
-            onClick={closeVideo}
+            onClick={() => setIsPlaying(false)}
             className="absolute top-6 right-6 z-50 p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-pointer"
           >
             <FiX className="text-xl" />
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsMuted(!isMuted);
-            }}
-            className="absolute top-6 right-20 z-50 p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-pointer"
-          >
-            {isMuted ? (
-              <FiVolumeX className="text-xl" />
-            ) : (
-              <FiVolume2 className="text-xl" />
-            )}
           </button>
 
           <div className="absolute top-6 left-6 z-50 font-mono text-xs pointer-events-none">
@@ -117,14 +94,15 @@ export default function VideoShowcase() {
             <div className="text-zinc-600 mt-1">Showreel 2024</div>
           </div>
 
-          <video
-            ref={videoRef}
-            src={getVideoUrl("/videos/showreel.mp4")}
-            autoPlay
-            muted={isMuted}
-            controls
-            className="w-full h-full object-contain"
-          />
+          <div className="w-full h-full flex items-center justify-center p-4 md:p-10">
+            <iframe
+              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`}
+              title="Showreel 2024"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full max-w-6xl aspect-video rounded-lg"
+            />
+          </div>
 
           <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
             <h3 className="text-2xl font-mono font-bold text-white mb-2">

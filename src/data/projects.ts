@@ -70,7 +70,6 @@ export const categories: ProjectCategory[] = [
         description:
           "Commercial VR fantasy title released in Japan. Created 40+ gameplay animations, combat animations, locomotion and character rigging.",
         tags: ["Unity", "VR", "Gameplay Animation", "Character Rigging"],
-        video: "projects/unity/magic-guardians-vr.mp4",
         status: "COMPLETED",
       },
       {
@@ -124,7 +123,6 @@ export const categories: ProjectCategory[] = [
         description:
           "Produced cinematic character animations, camera performances, and storytelling sequences while managing the complete animation workflow from concept to final render.",
         tags: ["Character Animation", "Cinematics", "Storytelling", "Rendering"],
-        video: "projects/rigging/jackd-storytelling.mp4",
         status: "COMPLETED",
       },
       {

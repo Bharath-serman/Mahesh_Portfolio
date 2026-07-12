@@ -6,6 +6,7 @@ import { useState, useRef } from "react";
 import { FiPlay, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
 import { getVideoUrl } from "@/utils/media";
+import VideoThumbnail from "./VideoThumbnail";
 
 export default function ProjectCategoryPage({
   category,
@@ -83,26 +84,31 @@ export default function ProjectCategoryPage({
                 transition={{ delay: index * 0.1, duration: 0.4 }}
                 className="group relative aspect-video rounded-lg overflow-hidden border border-zinc-800 hover:border-current transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800 pointer-events-none" />
-
                 {project.video ? (
-                  <button
-                    onClick={() => handlePlay(project.video!, project.title)}
-                    className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
-                  >
-                    <div className={`w-16 h-16 rounded-full border-2 ${category.color.replace("text-", "border-")}/40 flex items-center justify-center bg-black/40 group-hover:border-current group-hover:bg-current/10 group-hover:scale-110 transition-all duration-300`}>
-                      <FiPlay className={`text-2xl ml-1 ${category.color}`} />
-                    </div>
-                    <span className="mt-3 font-mono text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors tracking-widest">
-                      PLAY VIDEO
-                    </span>
-                  </button>
+                  <>
+                    <VideoThumbnail videoSrc={project.video} />
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors pointer-events-none" />
+                    <button
+                      onClick={() => handlePlay(project.video!, project.title)}
+                      className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
+                    >
+                      <div className={`w-16 h-16 rounded-full border-2 ${category.color.replace("text-", "border-")}/40 flex items-center justify-center bg-black/40 group-hover:border-current group-hover:bg-current/10 group-hover:scale-110 transition-all duration-300`}>
+                        <FiPlay className={`text-2xl ml-1 ${category.color}`} />
+                      </div>
+                      <span className="mt-3 font-mono text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors tracking-widest">
+                        PLAY VIDEO
+                      </span>
+                    </button>
+                  </>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className={`text-5xl font-mono opacity-20 ${category.color}`}>
-                      {category.icon}
-                    </span>
-                  </div>
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className={`text-5xl font-mono opacity-20 ${category.color}`}>
+                        {category.icon}
+                      </span>
+                    </div>
+                  </>
                 )}
 
                 <div className="absolute top-3 left-3 flex items-center gap-2">

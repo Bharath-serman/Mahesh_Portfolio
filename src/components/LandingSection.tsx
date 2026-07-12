@@ -8,14 +8,23 @@ interface LandingSectionProps {
 }
 
 const ascii_art = `
- ╔══════════════════════════════════════════════════╗
- ║  ███╗   ███╗██╗  ██╗███████╗██╗     ██╗  ██╗   ║
- ║  ████╗ ████║██║  ██║██╔════╝██║     ██║  ██║   ║
- ║  ██╔████╔██║███████║█████╗  ██║     ███████║   ║
- ║  ██║╚██╔╝██║██╔══██║██╔══╝  ██║     ██╔══██║   ║
- ║  ██║ ╚═╝ ██║██║  ██║███████╗███████╗██║  ██║   ║
- ║  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝   ║
- ╚══════════════════════════════════════════════════╝`;
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║              ███████╗██╗      ██████╗ ██╗    ██╗                 ║
+║              ██╔════╝██║     ██╔═══██╗██║    ██║                 ║
+║              █████╗  ██║     ██║   ██║██║ █╗ ██║                 ║
+║              ██╔══╝  ██║     ██║   ██║██║███╗██║                 ║
+║              ██║     ███████╗╚██████╔╝╚███╔███╔╝                 ║
+║              ╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝                  ║
+║                                                                   ║
+║         ██╗    ██╗ ██████╗ ██████╗ ██╗  ██╗███████╗             ║
+║         ██║    ██║██╔═══██╗██╔══██╗██║ ██╔╝██╔════╝             ║
+║         ██║ █╗ ██║██║   ██║██████╔╝█████╔╝ ███████╗             ║
+║         ██║███╗██║██║   ██║██╔══██╗██╔═██╗ ╚════██║             ║
+║         ╚███╔███╔╝╚██████╔╝██║  ██║██║  ██╗███████║             ║
+║          ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝             ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝`;
 
 export default function LandingSection({ onExplore }: LandingSectionProps) {
   const [typedText, setTypedText] = useState("");
@@ -64,18 +73,6 @@ export default function LandingSection({ onExplore }: LandingSectionProps) {
           </pre>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="mb-8"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded border border-accent/20 bg-accent/5 text-accent text-sm font-mono mb-6">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            STUDIO : FLOW WORKS STUDIO
-          </div>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -97,9 +94,8 @@ export default function LandingSection({ onExplore }: LandingSectionProps) {
         >
           <span className="text-accent-2">&gt;</span> {typedText}
           <span
-            className={`inline-block w-2 h-4 bg-accent ml-1 ${
-              showCursor ? "opacity-100" : "opacity-0"
-            }`}
+            className={`inline-block w-2 h-4 bg-accent ml-1 ${showCursor ? "opacity-100" : "opacity-0"
+              }`}
           />
         </motion.div>
 
