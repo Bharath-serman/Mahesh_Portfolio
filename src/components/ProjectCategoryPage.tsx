@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
+import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX, FiRepeat } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
 import { getVideoUrl } from "@/utils/media";
 import VideoThumbnail from "./VideoThumbnail";
@@ -16,6 +16,7 @@ export default function ProjectCategoryPage({
   const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [hasEnded, setHasEnded] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
@@ -32,6 +33,7 @@ export default function ProjectCategoryPage({
     }
     setActiveVideo(null);
     setIsPlaying(true);
+    setHasEnded(false);
     setProgress(0);
   };
 
@@ -68,6 +70,16 @@ export default function ProjectCategoryPage({
     const rect = bar.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     v.currentTime = pct * v.duration;
+    setHasEnded(false);
+  };
+
+  const handleReplay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play();
+    setIsPlaying(true);
+    setHasEnded(false);
   };
 
   return (
@@ -285,9 +297,24 @@ export default function ProjectCategoryPage({
               muted={isMuted}
               preload="auto"
               onTimeUpdate={handleTimeUpdate}
+              onEnded={() => { setIsPlaying(false); setHasEnded(true); }}
               onClick={togglePlay}
               className="w-full h-full object-contain cursor-pointer"
             />
+
+            {hasEnded && (
+              <button
+                onClick={handleReplay}
+                className="absolute inset-0 flex flex-col items-center justify-center z-10 cursor-pointer bg-black/40"
+              >
+                <div className="w-20 h-20 rounded-full border-2 border-accent/60 flex items-center justify-center bg-black/50 hover:border-accent hover:bg-accent/10 hover:scale-110 transition-all duration-300">
+                  <FiRepeat className="text-3xl text-accent" />
+                </div>
+                <span className="mt-3 font-mono text-sm text-zinc-400 tracking-widest">
+                  REPLAY
+                </span>
+              </button>
+            )}
 
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
               <div className="max-w-4xl mx-auto">
