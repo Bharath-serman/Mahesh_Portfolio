@@ -12,13 +12,19 @@ export function getVideoUrl(path: string | undefined): string {
     return path;
   }
   
+  // In development, always use local files
+  if (process.env.NODE_ENV === "development") {
+    return path.startsWith("/") ? path : `/${path}`;
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_ASSETS_BASE_URL;
   if (baseUrl) {
     // Extract the filename (e.g., "/videos/dreams-to-reality.mp4" -> "dreams-to-reality.mp4")
     const fileName = path.split("/").pop();
     if (fileName) {
-      // Return the base URL combined with the filename
-      return `${baseUrl.replace(/\/$/, "")}/${fileName}`;
+      // GitHub Releases replace spaces with dots in download URLs
+      const encodedFileName = fileName.replace(/ /g, ".");
+      return `${baseUrl.replace(/\/$/, "")}/${encodedFileName}`;
     }
   }
   
