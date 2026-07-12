@@ -2,8 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useState, useRef } from "react";
-import { FiPlay, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
 import { getVideoUrl } from "@/utils/media";
 import VideoThumbnail from "./VideoThumbnail";
@@ -15,7 +15,12 @@ export default function ProjectCategoryPage({
 }) {
   const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState("0:00");
+  const [duration, setDuration] = useState("0:00");
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   const handlePlay = (videoSrc: string, title: string) => {
     setActiveVideo({ url: videoSrc, title });
@@ -26,6 +31,43 @@ export default function ProjectCategoryPage({
       videoRef.current.pause();
     }
     setActiveVideo(null);
+    setIsPlaying(true);
+    setProgress(0);
+  };
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  const handleTimeUpdate = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    setProgress((v.currentTime / v.duration) * 100 || 0);
+    setCurrentTime(formatTime(v.currentTime));
+    setDuration(formatTime(v.duration));
+  }, []);
+
+  const togglePlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play();
+      setIsPlaying(true);
+    } else {
+      v.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    const bar = progressRef.current;
+    const v = videoRef.current;
+    if (!bar || !v) return;
+    const rect = bar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    v.currentTime = pct * v.duration;
   };
 
   return (
@@ -117,10 +159,10 @@ export default function ProjectCategoryPage({
                   </span>
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 ${project.status === "COMPLETED"
-                        ? "text-accent"
-                        : project.status === "IN PROGRESS"
-                          ? "text-yellow-400"
-                          : "text-accent-3"
+                      ? "text-accent"
+                      : project.status === "IN PROGRESS"
+                        ? "text-yellow-400"
+                        : "text-accent-3"
                       }`}
                   >
                     {project.status}
@@ -176,8 +218,8 @@ export default function ProjectCategoryPage({
                 key={cat.id}
                 href={`/projects/${cat.id}`}
                 className={`block px-3 py-2.5 rounded font-mono text-xs transition-all duration-200 ${cat.id === category.id
-                    ? `${cat.color} bg-current/10 border-l-2 border-current`
-                    : "text-zinc-500 hover:text-white hover:bg-zinc-800/50 border-l-2 border-transparent"
+                  ? `${cat.color} bg-current/10 border-l-2 border-current`
+                  : "text-zinc-500 hover:text-white hover:bg-zinc-800/50 border-l-2 border-transparent"
                   }`}
               >
                 <div className="flex items-center gap-2">
@@ -239,18 +281,53 @@ export default function ProjectCategoryPage({
               ref={videoRef}
               src={getVideoUrl(activeVideo.url)}
               autoPlay
+              playsInline
               muted={isMuted}
-              controls
-              className="w-full h-full object-contain"
+              preload="auto"
+              onTimeUpdate={handleTimeUpdate}
+              onClick={togglePlay}
+              className="w-full h-full object-contain cursor-pointer"
             />
 
-            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black via-black/80 to-transparent">
-              <h3 className="text-2xl font-mono font-bold text-white mb-2">
-                {activeVideo.title}
-              </h3>
-              <p className="text-zinc-400 font-mono text-sm">
-                Press ESC or click X to close
-              </p>
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
+              <div className="max-w-4xl mx-auto">
+                <h3 className="text-xl font-mono font-bold text-white mb-3">
+                  {activeVideo.title}
+                </h3>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={togglePlay}
+                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+                  >
+                    {isPlaying ? <FiPause className="text-sm" /> : <FiPlay className="text-sm ml-0.5" />}
+                  </button>
+
+                  <div
+                    ref={progressRef}
+                    onClick={handleSeek}
+                    className="flex-1 h-1.5 bg-zinc-800 rounded-full cursor-pointer group relative"
+                  >
+                    <div
+                      className="h-full bg-accent rounded-full relative"
+                      style={{ width: `${progress}%` }}
+                    >
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-accent rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </div>
+
+                  <span className="text-[11px] font-mono text-zinc-500 min-w-[70px] text-right">
+                    {currentTime} / {duration}
+                  </span>
+
+                  <button
+                    onClick={() => setIsMuted(!isMuted)}
+                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+                  >
+                    {isMuted ? <FiVolumeX className="text-sm" /> : <FiVolume2 className="text-sm" />}
+                  </button>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

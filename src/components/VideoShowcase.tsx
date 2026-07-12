@@ -59,7 +59,7 @@ export default function VideoShowcase() {
 
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
           <h3 className="font-mono text-xl font-bold text-white mb-2">
-            Sai Mahesh Nikhil — Showreel 2024
+            Sai Mahesh Nikhil — Showreel 2026
           </h3>
           <p className="font-mono text-sm text-zinc-400">
             3D Modeling • Environment Art • Animation • Level Design

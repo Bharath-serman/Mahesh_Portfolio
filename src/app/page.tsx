@@ -18,8 +18,7 @@ export default function Home() {
   const portfolioRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio-view");
-    if (saved === "true") {
+    if (window.location.hash) {
       setShowPortfolio(true);
     }
     setMounted(true);
@@ -43,7 +42,6 @@ export default function Home() {
     setIsTransitioning(true);
     setTimeout(() => {
       setShowPortfolio(true);
-      localStorage.setItem("portfolio-view", "true");
     }, 350);
   };
 
@@ -51,7 +49,6 @@ export default function Home() {
     setIsTransitioning(true);
     setTimeout(() => {
       setShowPortfolio(false);
-      localStorage.removeItem("portfolio-view");
     }, 350);
   };
 

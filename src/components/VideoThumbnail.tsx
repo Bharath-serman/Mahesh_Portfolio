@@ -49,6 +49,7 @@ export default function VideoThumbnail({
         ref={videoRef}
         src={getVideoUrl(videoSrc)}
         preload="metadata"
+        playsInline
         muted
         className="hidden"
       />

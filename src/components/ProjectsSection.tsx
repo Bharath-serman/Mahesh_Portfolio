@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { categories } from "@/data/projects";
+import VideoThumbnail from "./VideoThumbnail";
 
 export default function ProjectsSection() {
   return (
@@ -37,9 +38,28 @@ export default function ProjectsSection() {
               className="block group"
             >
               <div className={`relative aspect-video rounded-lg overflow-hidden border border-zinc-800 hover:border-current transition-all duration-300`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800" />
+                {(() => {
+                  const firstVideo = category.projects.find((p) => p.video)?.video;
+                  if (firstVideo) {
+                    return (
+                      <>
+                        <VideoThumbnail videoSrc={firstVideo} />
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
+                      </>
+                    );
+                  }
+                  if (category.thumbnail) {
+                    return (
+                      <>
+                        <img src={category.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
+                      </>
+                    );
+                  }
+                  return <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800" />;
+                })()}
 
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <span className={`text-4xl font-mono ${category.color} opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all duration-300`}>
                     {category.icon}
                   </span>

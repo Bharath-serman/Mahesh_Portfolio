@@ -27,8 +27,7 @@ const skillCategories = [
     textColor: "text-accent-2",
     statusColor: "bg-accent-2",
     skills: [
-      { name: "SUBSTANCE PT", id: "SPT-001" },
-      { name: "SUBSTANCE DS", id: "SDS-002" },
+      { name: "SUBSTANCE PAINTER", id: "SPT-001" },
       { name: "PHOTOSHOP", id: "PSH-003" },
     ],
   },
@@ -41,7 +40,7 @@ const skillCategories = [
     textColor: "text-accent-3",
     statusColor: "bg-accent-3",
     skills: [
-      { name: "UNREAL ENG", id: "UE5-001" },
+      { name: "UNREAL ENGINE", id: "UE5-001" },
       { name: "UNITY", id: "UNT-002" },
     ],
   },
@@ -57,7 +56,6 @@ const skillCategories = [
       { name: "CHARACTER RIGGING", id: "CRG-001" },
       { name: "CHARACTER ANIMATION", id: "ANM-002" },
       { name: "MOCAP", id: "MCP-003" },
-      { name: "IK/FK", id: "IKF-004" },
     ],
   },
   {
@@ -84,7 +82,7 @@ const skillCategories = [
     statusColor: "bg-cyan-400",
     skills: [
       { name: "AFTER EFFECTS", id: "AEF-001" },
-      { name: "PREMIERE", id: "PRM-002" },
+      { name: "PREMIERE PRO", id: "PRM-002" },
       { name: "DAVINCI", id: "DVC-003" },
     ],
   },

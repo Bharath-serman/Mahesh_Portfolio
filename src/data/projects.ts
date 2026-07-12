@@ -15,17 +15,18 @@ export interface ProjectCategory {
   icon: string;
   color: string;
   projectCount: number;
+  thumbnail?: string;
   projects: Project[];
 }
 
 export const categories: ProjectCategory[] = [
   {
     id: "unreal",
-    title: "Unreal Engine Works",
-    description: "Real-time environments built in Unreal Engine 5",
-    icon: "U",
+    title: "3D-Short films",
+    description: "3D Short films and animations",
+    icon: "",
     color: "text-blue-400",
-    projectCount: 3,
+    projectCount: 6,
     projects: [
       {
         id: "From Dreams to Reality",
@@ -52,17 +53,45 @@ export const categories: ProjectCategory[] = [
           "Underground fighting arena featuring environment creation, VFX, camera blocking and cinematic production.",
         tags: ["Unreal Engine", "Environment and Lighting", "VFX", "Cinematics"],
         video: "/videos/Blood in the Basement.mp4",
-        status: "CONCEPT",
+        status: "COMPLETED",
+      },
+      {
+        id: "The Basement Dweller",
+        title: "Basement Dweller",
+        description:
+          "A terrifying short horror animation featuring a sinister, smiling entity.",
+        tags: ["Camera Animation", "Cinematics", "Horror"],
+        video: "/videos/OM_Horror.mp4",
+        status: "COMPLETED",
+      },
+      {
+        id: "Dungeon",
+        title: "Dungeon_Environment",
+        description:
+          "A tense cinematic exploration through a dimly lit, torch-fed stone dungeon.",
+        tags: ["Cinematics", "Storytelling"],
+        video: "/videos/SF_Third003_Dungeon.mp4",
+        status: "COMPLETED",
+      },
+      {
+        id: "Medieval_Era_Exploration",
+        title: "Medieval Era Exploration",
+        description:
+          "A scenic cinematic third-person view of a character exploring a vast medieval castle estate.",
+        tags: ["Unreal Engine", "Cinematics", "shortcontent"],
+        video: "/videos/Medieval Era Exploration.mp4",
+        status: "COMPLETED",
       },
     ],
   },
   {
     id: "Unity",
-    title: "Unity Engine Works",
-    description: "Real-time experiences built in Unity",
-    icon: "◎",
+    title: "Game Animations",
+    description: "Game Animations for VR Games.",
+    icon: "",
     color: "text-accent",
     projectCount: 3,
+    thumbnail: "/images/game-animations.jpg",
     projects: [
       {
         id: "Magic Guardians VR",
@@ -91,48 +120,13 @@ export const categories: ProjectCategory[] = [
     ],
   },
   {
-    id: "3d-modeling",
-    title: "3D Assets",
-    description: "Characters, props & environment pieces",
-    icon: "◆",
-    color: "text-accent-2",
-    projectCount: 1,
-    projects: [
-      {
-        id: "Medieval House Environment",
-        title: "Medieval House Environment",
-        description:
-          "Production-ready medieval environment modeled in Maya, textured using Substance Painter and rendered in Unreal Engine.",
-        tags: ["Maya", "Environment Art", "Substance Painter", "PBR Graph"],
-        video: "/videos/Medieval_House.mp4",
-        status: "COMPLETED",
-      },
-    ],
-  },
-  {
     id: "rigging",
-    title: "Rigging & Animation",
+    title: "Game character Animation",
     description: "Character rigs & animation work",
-    icon: "⟠",
+    icon: "",
     color: "text-orange-400",
-    projectCount: 3,
+    projectCount: 2,
     projects: [
-      {
-        id: "JackD Storytelling Content",
-        title: "JackD Storytelling Content",
-        description:
-          "Produced cinematic character animations, camera performances, and storytelling sequences while managing the complete animation workflow from concept to final render.",
-        tags: ["Character Animation", "Cinematics", "Storytelling", "Rendering"],
-        status: "COMPLETED",
-      },
-      {
-        id: "Educational VR Awareness",
-        title: "Educational VR Awareness",
-        description:
-          "Created and rigged original characters with idle, walk, and interaction animations while ensuring smooth integration into a real-time VR educational environment.",
-        tags: ["Character Rigging", "VR", "Walk Cycle", "Advanced Rigging"],
-        status: "IN PROGRESS",
-      },
       {
         id: "facial-rig",
         title: "Facial Animation System",
@@ -157,7 +151,7 @@ export const categories: ProjectCategory[] = [
     id: "Storytelling",
     title: "Storytelling",
     description: "Storytelling and cinematic works.",
-    icon: "S",
+    icon: "",
     color: "text-red-400",
     projectCount: 3,
     projects: [
@@ -179,13 +173,22 @@ export const categories: ProjectCategory[] = [
         video: "/videos/Father_Friend_37_Cheques_Final.mp4",
         status: "COMPLETED",
       },
+      {
+        id: "Anonymous_Donor",
+        title: "Anonymous Donor",
+        description:
+          "A moving short story about a speaker who discovers the hidden, life-long sacrifices their father made to secretly fund their university education.",
+        tags: ["Storytelling", "Drama", "Inspirational"],
+        video: "/videos/AnonymusDonar_FinalRender.mp4",
+        status: "COMPLETED",
+      }
     ],
   },
   {
     id: "LevelDesign",
     title: "Level Design",
     description: "Level design works.",
-    icon: "★",
+    icon: "",
     color: "text-violet-400",
     projectCount: 3,
     projects: [
@@ -207,13 +210,22 @@ export const categories: ProjectCategory[] = [
         video: "/videos/GraveYard_video.mp4",
         status: "COMPLETED",
       },
+      {
+        id: "Medieval House Environment",
+        title: "Medieval House Environment",
+        description:
+          "Production-ready medieval environment modeled in Maya, textured using Substance Painter and rendered in Unreal Engine.",
+        tags: ["Maya", "Environment Art", "Substance Painter", "PBR Graph"],
+        video: "/videos/Medieval_House.mp4",
+        status: "COMPLETED",
+      },
     ],
   },
   {
     id: "ShortContents",
     title: "Short Contents",
     description: "Short Content works.",
-    icon: "⟡",
+    icon: "",
     color: "text-cyan-400",
     projectCount: 3,
     projects: [
