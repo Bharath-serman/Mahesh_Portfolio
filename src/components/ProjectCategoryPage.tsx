@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX, FiRepeat } from "react-icons/fi";
+import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX, FiRepeat, FiMaximize, FiMinimize } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
 import { getVideoUrl } from "@/utils/media";
 import VideoThumbnail from "./VideoThumbnail";
@@ -20,8 +20,122 @@ export default function ProjectCategoryPage({
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
+  
+  // Controls overlay toggling and auto-hide states/refs
+  const [showControls, setShowControls] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetControlsTimeout = useCallback(() => {
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    if (isPlaying && !hasEnded) {
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000); // Auto-hide controls after 3 seconds of inactivity
+    }
+  }, [isPlaying, hasEnded]);
+
+  const handleContainerClick = () => {
+    setShowControls((prev) => !prev);
+    resetControlsTimeout();
+  };
+
+  useEffect(() => {
+    if (activeVideo) {
+      setShowControls(true);
+      if (isPlaying) {
+        resetControlsTimeout();
+      }
+    } else {
+      setShowControls(true);
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    }
+    return () => {
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, [activeVideo, isPlaying, resetControlsTimeout]);
+
+  // Fullscreen and auto-rotation orientation control logic
+  const toggleFullscreen = async () => {
+    const container = containerRef.current;
+    const video = videoRef.current;
+    if (!container || !video) return;
+
+    if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+      // Enter fullscreen
+      try {
+        if (container.requestFullscreen) {
+          await container.requestFullscreen();
+          setIsFullscreen(true);
+        } else if ((container as any).webkitRequestFullscreen) {
+          await (container as any).webkitRequestFullscreen();
+          setIsFullscreen(true);
+        } else if ((video as any).webkitEnterFullscreen) {
+          // Native fullscreen fallback for iOS (iPhone) which auto-rotates
+          (video as any).webkitEnterFullscreen();
+          return;
+        }
+
+        // Try locking screen to landscape
+        try {
+          if (window.screen && window.screen.orientation && (window.screen.orientation as any).lock) {
+            await (window.screen.orientation as any).lock("landscape");
+          }
+        } catch (e) {
+          console.warn("Orientation lock failed/unsupported:", e);
+        }
+      } catch (err) {
+        console.error("Fullscreen error:", err);
+      }
+    } else {
+      // Exit fullscreen
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
+        setIsFullscreen(false);
+      } catch (err) {
+        console.error("Exit fullscreen error:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsFullscreen(isCurrentlyFullscreen);
+
+      if (!isCurrentlyFullscreen) {
+        // Unlock screen orientation when exiting fullscreen
+        try {
+          if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+            window.screen.orientation.unlock();
+          }
+        } catch (e) {
+          console.warn("Orientation unlock failed:", e);
+        }
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   const handlePlay = (videoSrc: string, title: string) => {
     setActiveVideo({ url: videoSrc, title });
@@ -35,6 +149,16 @@ export default function ProjectCategoryPage({
     setIsPlaying(true);
     setHasEnded(false);
     setProgress(0);
+    // Exit fullscreen if active when closed
+    if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+      try {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      } catch (e) {}
+    }
   };
 
   const formatTime = (s: number) => {
@@ -259,32 +383,48 @@ export default function ProjectCategoryPage({
       <AnimatePresence>
         {activeVideo && (
           <motion.div
+            ref={containerRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+            onClick={handleContainerClick}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center cursor-pointer select-none"
           >
-            <div className="absolute inset-0 scanline opacity-10" />
+            <div className="absolute inset-0 scanline opacity-10 pointer-events-none" />
 
-            <button
-              onClick={closeVideo}
-              className="absolute top-6 right-6 z-50 p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+            {/* Top Right Controls Group */}
+            <div
+              className={`absolute top-6 right-6 z-50 flex items-center gap-2 transition-opacity duration-300 ${
+                showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
             >
-              <FiX className="text-xl" />
-            </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMuted(!isMuted);
+                  resetControlsTimeout();
+                }}
+                className="p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default"
+              >
+                {isMuted ? <FiVolumeX className="text-xl" /> : <FiVolume2 className="text-xl" />}
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeVideo();
+                }}
+                className="p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default"
+              >
+                <FiX className="text-xl" />
+              </button>
+            </div>
 
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className="absolute top-6 right-20 z-50 p-3 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+            {/* Top Left Title and Metadata */}
+            <div
+              className={`absolute top-6 left-6 z-50 font-mono text-xs transition-opacity duration-300 pointer-events-none ${
+                showControls ? "opacity-100" : "opacity-0"
+              }`}
             >
-              {isMuted ? (
-                <FiVolumeX className="text-xl" />
-              ) : (
-                <FiVolume2 className="text-xl" />
-              )}
-            </button>
-
-            <div className="absolute top-6 left-6 z-50 font-mono text-xs">
               <div className={category.color}>{activeVideo.title}</div>
               <div className="text-zinc-600 mt-1">{category.title}</div>
             </div>
@@ -297,14 +437,42 @@ export default function ProjectCategoryPage({
               muted={isMuted}
               preload="auto"
               onTimeUpdate={handleTimeUpdate}
-              onEnded={() => { setIsPlaying(false); setHasEnded(true); }}
-              onClick={togglePlay}
-              className="w-full h-full object-contain cursor-pointer"
+              onEnded={() => {
+                setIsPlaying(false);
+                setHasEnded(true);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleContainerClick();
+              }}
+              className="w-full h-full object-contain"
             />
 
+            {/* Middle Play/Pause Button (YouTube-style Overlay) */}
+            <div
+              className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${
+                showControls && !hasEnded ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  togglePlay();
+                  resetControlsTimeout();
+                }}
+                className="w-16 h-16 rounded-full border border-zinc-700 bg-zinc-900/80 hover:border-accent hover:text-accent hover:scale-110 transition-all text-white flex items-center justify-center pointer-events-auto cursor-default shadow-lg"
+              >
+                {isPlaying ? <FiPause className="text-2xl" /> : <FiPlay className="text-2xl ml-1" />}
+              </button>
+            </div>
+
+            {/* Replay Overlay */}
             {hasEnded && (
               <button
-                onClick={handleReplay}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReplay();
+                }}
                 className="absolute inset-0 flex flex-col items-center justify-center z-10 cursor-pointer bg-black/40"
               >
                 <div className="w-20 h-20 rounded-full border-2 border-accent/60 flex items-center justify-center bg-black/50 hover:border-accent hover:bg-accent/10 hover:scale-110 transition-all duration-300">
@@ -316,23 +484,37 @@ export default function ProjectCategoryPage({
               </button>
             )}
 
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
+            {/* Bottom Playback Controls Bar */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className={`absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 ${
+                showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+            >
               <div className="max-w-4xl mx-auto">
-                <h3 className="text-xl font-mono font-bold text-white mb-3">
+                <h3 className="text-xl font-mono font-bold text-white mb-3 hidden md:block">
                   {activeVideo.title}
                 </h3>
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={togglePlay}
-                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePlay();
+                      resetControlsTimeout();
+                    }}
+                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default"
                   >
                     {isPlaying ? <FiPause className="text-sm" /> : <FiPlay className="text-sm ml-0.5" />}
                   </button>
 
                   <div
                     ref={progressRef}
-                    onClick={handleSeek}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSeek(e);
+                      resetControlsTimeout();
+                    }}
                     className="flex-1 h-1.5 bg-zinc-800 rounded-full cursor-pointer group relative"
                   >
                     <div
@@ -348,10 +530,25 @@ export default function ProjectCategoryPage({
                   </span>
 
                   <button
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMuted(!isMuted);
+                      resetControlsTimeout();
+                    }}
+                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default"
                   >
                     {isMuted ? <FiVolumeX className="text-sm" /> : <FiVolume2 className="text-sm" />}
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFullscreen();
+                      resetControlsTimeout();
+                    }}
+                    className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default"
+                  >
+                    {isFullscreen ? <FiMinimize className="text-sm" /> : <FiMaximize className="text-sm" />}
                   </button>
                 </div>
               </div>
