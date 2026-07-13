@@ -59,12 +59,6 @@ export default function ProjectsSection() {
                   return <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800" />;
                 })()}
 
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <span className={`text-4xl font-mono ${category.color} opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all duration-300`}>
-                    {category.icon}
-                  </span>
-                </div>
-
                 <div className="absolute top-3 left-3">
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${category.color} bg-black/60`}>
                     {category.projectCount} works

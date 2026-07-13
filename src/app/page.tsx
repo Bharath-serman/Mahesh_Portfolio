@@ -15,7 +15,17 @@ export default function Home() {
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
   const portfolioRef = useRef<HTMLDivElement>(null);
+
+  const copyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText("saimaheshnikhilduddu@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    window.location.href = "mailto:saimaheshnikhilduddu@gmail.com";
+  };
 
   useEffect(() => {
     if (window.location.hash) {
@@ -64,7 +74,18 @@ export default function Home() {
 
   useEffect(() => {
     if (!isTransitioning) {
-      window.scrollTo({ top: 0, behavior: "instant" });
+      const hash = window.location.hash;
+      if (hash) {
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "instant" });
+            return;
+          }
+        }, 50);
+      } else {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
     }
   }, [showPortfolio, isTransitioning]);
 
@@ -149,7 +170,7 @@ export default function Home() {
                   onClick={handleGoHome}
                   className="text-xs font-mono text-zinc-600 hover:text-accent border border-zinc-800 hover:border-accent/30 px-3 py-1.5 rounded transition-all"
                 >
-                  [ESC] home
+                  [ESC] ←
                 </button>
               </div>
             </nav>
@@ -184,20 +205,105 @@ export default function Home() {
               </div>
             </main>
 
-            <footer className="border-t border-accent/10 py-8">
-              <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="font-mono text-xs text-zinc-600 space-y-1">
-                  <div>
-                    <span className="text-accent">$</span> echo &quot;Sai Mahesh
-                    Nikhil&quot;
+            <footer className="relative border-t border-accent/10 bg-[#040406] py-20 overflow-hidden">
+              {/* Decorative scanline and grid backgrounds */}
+              <div className="absolute inset-0 scanline opacity-5 pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(#111_1px,transparent_1px)] [background-size:16px_16px] opacity-25 pointer-events-none" />
+
+              {/* Subtle accent border line at the top */}
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+
+              <div className="max-w-6xl mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+                  {/* Column 1: Brand / Studio Info */}
+                  <div className="space-y-4 font-mono">
+                    <div className="flex items-center gap-2">
+                      <span className="text-accent text-sm font-bold tracking-wider">NIKHIL</span>
+                      <span className="text-zinc-700">/</span>
+                      <span className="text-[10px] text-zinc-500 bg-zinc-900/80 px-2 py-0.5 rounded border border-zinc-800">v2.0.26</span>
+                    </div>
+                    <p className="text-xs text-zinc-400 leading-relaxed max-w-xs">
+                      Specializing in real-time environments, AAA cinematics, character rigging, and immersive interactive design inside Unreal Engine.
+                    </p>
+                    <div className="text-[11px] text-zinc-600 flex items-center gap-2 pt-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+                      <span>LOCATION: CHENNAI, INDIA</span>
+                    </div>
+                  </div>
+
+                  {/* Column 2: Navigation Links */}
+                  <div className="flex flex-col gap-4 font-mono">
+                    <span className="text-[10px] text-zinc-500 tracking-widest uppercase border-b border-zinc-800 pb-2">
+                      DIRECTORY
+                    </span>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
+                      {[
+                        { label: "Showreel", href: "#showcase" },
+                        { label: "Portfolio gallery", href: "#projects" },
+                        { label: "Creative Toolkit", href: "#skills" },
+                        { label: "Experience", href: "#experience" },
+                        { label: "Build Hierarchy", href: "#contact" },
+                      ].map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          className="text-zinc-500 hover:text-accent hover:translate-x-0.5 transition-all duration-200 flex items-center gap-1.5"
+                        >
+                          <span className="text-[9px] text-zinc-700">■</span> {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Column 3: Connect Links & Diagnostics */}
+                  <div className="flex flex-col gap-4 font-mono">
+                    <span className="text-[10px] text-zinc-500 tracking-widest uppercase border-b border-zinc-800 pb-2">
+                      NETWORK CONNECT
+                    </span>
+                    <div className="flex flex-col gap-2.5 text-xs">
+                      <a
+                        href="https://www.linkedin.com/in/duddu-sai-mahesh-nikhil/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-500 hover:text-accent hover:translate-x-0.5 transition-all duration-200 flex items-center gap-2"
+                      >
+                        <span className="text-zinc-600"></span> LinkedIn
+                      </a>
+                      <a
+                        href="https://www.artstation.com/d_sai_mahesh_nikhil"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-500 hover:text-accent hover:translate-x-0.5 transition-all duration-200 flex items-center gap-2"
+                      >
+                        <span className="text-zinc-600"></span> ArtStation
+                      </a>
+                      <a
+                        href="mailto:saimaheshnikhilduddu@gmail.com"
+                        onClick={copyEmail}
+                        className="text-zinc-500 hover:text-accent hover:translate-x-0.5 transition-all duration-200 flex items-center gap-2"
+                      >
+                        <span className="text-zinc-600"></span> {copied ? "Copied Email!" : "Email Link"}
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Bottom status readout */}
+                <div className="border-t border-zinc-900 pt-8 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[10px] text-zinc-600">
+                  <div className="flex items-center gap-3">
+                    <span>SYS.STATUS: <span className="text-accent">ONLINE</span></span>
+                    <span className="text-zinc-800">|</span>
+                    <span>PING: <span className="text-zinc-400">12ms</span></span>
+                    <span className="text-zinc-800">|</span>
+                    <span>THEME: <span className="text-accent-3">CYBERPUNK_MONO</span></span>
                   </div>
                   <div className="text-zinc-700">
-                    &copy; 2026 // Made with creativity & passion
+                    &copy; 2026 Duddu Sai Mahesh Nikhil. All rights reserved.
                   </div>
                 </div>
-                <div className="font-mono text-xs text-zinc-700">
-                  <span className="text-accent">■</span> STUDIO STATUS: ONLINE
-                </div>
+
               </div>
             </footer>
 

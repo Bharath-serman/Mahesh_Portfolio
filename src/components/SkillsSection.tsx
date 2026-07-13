@@ -15,7 +15,6 @@ const skillCategories = [
       { name: "BLENDER", id: "BLD-001" },
       { name: "MAYA", id: "MYA-002" },
       { name: "ZBRUSH", id: "ZBR-003" },
-      { name: "3DS MAX", id: "3MX-004" },
     ],
   },
   {

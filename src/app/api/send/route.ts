@@ -25,153 +25,77 @@ export async function POST(request: NextRequest) {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <meta name="x-apple-disable-message-reformatting">
-          <title>New Contact Form Submission</title>
+          <title>New Portfolio Message</title>
         </head>
-        <body style="margin: 0; padding: 0; background-color: #050508; font-family: 'Courier New', Courier, monospace; -webkit-font-smoothing: antialiased;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #050508; padding: 40px 20px;">
+        <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; -webkit-font-smoothing: antialiased;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
             <tr>
               <td align="center">
-                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; border: 1px solid #111; border-radius: 8px; overflow: hidden; background-color: #080808;">
+                <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width: 560px; width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
                   
-                  <!-- Terminal Header Bar -->
+                  <!-- Top Accent Line -->
                   <tr>
-                    <td style="background-color: #0d120d; padding: 10px 16px; border-bottom: 1px solid #00ff8833;">
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td>
-                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #ff5f56; margin-right: 6px;"></span>
-                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #ffbd2e; margin-right: 6px;"></span>
-                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #27c93f; margin-right: 12px;"></span>
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #555; letter-spacing: 1px;">portfolio_contact.log</span>
-                          </td>
-                          <td align="right">
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #00ff88;">● CONNECTED</span>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
+                    <td style="height: 4px; background-color: #0ea5e9; border-top-left-radius: 8px; border-top-right-radius: 8px;"></td>
                   </tr>
 
                   <!-- Header -->
                   <tr>
-                    <td style="padding: 30px 30px 25px 30px;">
+                    <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #f1f5f9;">
+                      <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #0f172a;">
+                        New Message Received
+                      </h2>
+                      <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748b;">
+                        Subject: ${subject}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <!-- Sender Details -->
+                  <tr>
+                    <td style="padding: 24px 32px 20px 32px;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                         <tr>
-                          <td style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #00ff88; letter-spacing: 3px; padding-bottom: 8px;">
-                            &gt; INCOMING TRANSMISSION_
+                          <td style="font-size: 13px; font-weight: 600; color: #475569; padding-bottom: 6px; width: 100px;">From</td>
+                          <td style="font-size: 14px; color: #0f172a; padding-bottom: 6px;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="font-size: 13px; font-weight: 600; color: #475569; padding-bottom: 6px;">Email</td>
+                          <td style="font-size: 14px; padding-bottom: 6px;">
+                            <a href="mailto:${email}" style="color: #0ea5e9; text-decoration: none;">${email}</a>
                           </td>
                         </tr>
                         <tr>
-                          <td style="font-family: 'Courier New', Courier, monospace; font-size: 22px; color: #ffffff; font-weight: bold; padding-bottom: 12px;">
-                            PORTFOLIO<span style="color: #ff00ff;">:</span> ${subject}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="height: 2px; background: linear-gradient(90deg, #00ff88, #00ff8800);"></td>
+                          <td style="font-size: 13px; font-weight: 600; color: #475569; padding-bottom: 6px;">Date</td>
+                          <td style="font-size: 14px; color: #0f172a; padding-bottom: 6px;">${new Date().toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}</td>
                         </tr>
                       </table>
                     </td>
                   </tr>
 
-                  <!-- Sender Info -->
+                  <!-- Message Body -->
                   <tr>
-                    <td style="padding: 0 30px 25px 30px;">
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0e0a; border: 1px solid #00ff8833; border-radius: 6px;">
-                        <tr>
-                          <td style="padding: 10px 14px; background-color: #0d120d; border-bottom: 1px solid #00ff8833;">
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #ff5f56;">●</span>
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #ffbd2e;">●</span>
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #27c93f;">●</span>
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #555; margin-left: 12px;">sender_info.txt</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 20px;">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td width="90" style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #00ffff; padding: 8px 0; vertical-align: top;">NAME</td>
-                                <td style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #ffffff; padding: 8px 0;">${name}</td>
-                              </tr>
-                              <tr>
-                                <td width="90" style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #00ffff; padding: 8px 0; vertical-align: top;">EMAIL</td>
-                                <td style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #ffffff; padding: 8px 0;">
-                                  <a href="mailto:${email}" style="color: #00ff88; text-decoration: none; border-bottom: 1px solid #00ff8833;">${email}</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="90" style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #00ffff; padding: 8px 0; vertical-align: top;">TIME</td>
-                                <td style="font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #ffffff; padding: 8px 0;">${new Date().toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}</td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-
-                  <!-- Message -->
-                  <tr>
-                    <td style="padding: 0 30px 30px 30px;">
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0e0a; border: 1px solid #ff00ff33; border-radius: 6px;">
-                        <tr>
-                          <td style="padding: 10px 14px; background-color: #0d120d; border-bottom: 1px solid #ff00ff33;">
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #ff00ff;">// MESSAGE_BODY</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 20px;">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #111; border-left: 3px solid #00ff88; border-radius: 4px;">
-                              <tr>
-                                <td style="padding: 18px;">
-                                  <p style="font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #cccccc; line-height: 1.8; margin: 0; white-space: pre-wrap;">${message}</p>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
+                    <td style="padding: 0 32px 32px 32px;">
+                      <div style="background-color: #f1f5f9; border-left: 4px solid #cbd5e1; border-radius: 4px; padding: 20px;">
+                        <p style="margin: 0; font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                      </div>
                     </td>
                   </tr>
 
                   <!-- Reply Button -->
                   <tr>
-                    <td style="padding: 0 30px 35px 30px;">
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td align="center">
-                            <table role="presentation" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td style="background-color: #00ff88; border-radius: 4px;">
-                                  <a href="mailto:${email}?subject=Re: Portfolio - ${subject}" style="display: inline-block; padding: 14px 45px; background-color: #00ff88; color: #050508; font-family: 'Courier New', Courier, monospace; font-size: 13px; font-weight: bold; text-decoration: none; letter-spacing: 3px; border-radius: 4px;">
-                                    REPLY
-                                  </a>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td align="center" style="padding-top: 10px;">
-                            <span style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #444;">click to respond to ${email}</span>
-                          </td>
-                        </tr>
-                      </table>
+                    <td style="padding: 0 32px 40px 32px;" align="center">
+                      <a href="mailto:${email}?subject=Re: Portfolio - ${subject}" style="display: inline-block; padding: 12px 32px; background-color: #0f172a; color: #ffffff; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">
+                        Reply to Sender
+                      </a>
                     </td>
                   </tr>
 
                   <!-- Footer -->
                   <tr>
-                    <td style="background-color: #0a0a0a; border-top: 1px solid #1a1a1a; padding: 20px 30px;">
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td style="font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #333; line-height: 1.8;">
-                            <span style="color: #555;">TRANSMISSION_ID:</span> ${Date.now().toString(36).toUpperCase()}<br>
-                            <span style="color: #555;">SOURCE:</span> PORTFOLIO_CONTACT_FORM<br>
-                            <span style="color: #555;">STATUS:</span> <span style="color: #00ff88;">DELIVERED</span>
-                          </td>
-                        </tr>
-                      </table>
+                    <td style="background-color: #f8fafc; border-top: 1px solid #f1f5f9; padding: 20px 32px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; text-align: center;">
+                      <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                        This email was sent from the contact form on your portfolio website.
+                      </p>
                     </td>
                   </tr>
 

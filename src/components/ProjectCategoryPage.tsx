@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX, FiRepeat, FiMaximize, FiMinimize } from "react-icons/fi";
+import { FiPlay, FiPause, FiX, FiVolume2, FiVolumeX, FiRepeat, FiMaximize, FiMinimize, FiSettings, FiCheck } from "react-icons/fi";
 import { ProjectCategory, categories } from "@/data/projects";
 import { getVideoUrl } from "@/utils/media";
 import VideoThumbnail from "./VideoThumbnail";
@@ -20,7 +20,10 @@ export default function ProjectCategoryPage({
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
-  
+  const [quality, setQuality] = useState<"Auto" | "1080p" | "720p" | "480p">("Auto");
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [isSwitchingQuality, setIsSwitchingQuality] = useState(false);
+
   // Controls overlay toggling and auto-hide states/refs
   const [showControls, setShowControls] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -63,6 +66,75 @@ export default function ProjectCategoryPage({
       }
     };
   }, [activeVideo, isPlaying, resetControlsTimeout]);
+
+  // Auto-close quality menu when controls are hidden
+  useEffect(() => {
+    if (!showControls) {
+      setShowQualityMenu(false);
+    }
+  }, [showControls]);
+
+  const handleQualityChange = (newQuality: "Auto" | "1080p" | "720p" | "480p") => {
+    if (!videoRef.current || !activeVideo) return;
+
+    const currentTimeVal = videoRef.current.currentTime;
+    const playingVal = !videoRef.current.paused;
+
+    setIsSwitchingQuality(true);
+    setQuality(newQuality);
+    setShowQualityMenu(false);
+
+    setTimeout(() => {
+      if (videoRef.current && activeVideo) {
+        let targetUrl = activeVideo.url;
+        if (newQuality === "720p") {
+          targetUrl = activeVideo.url.replace(/(\.mp4|\.mov)$/, "_720p$1");
+        } else if (newQuality === "480p") {
+          targetUrl = activeVideo.url.replace(/(\.mp4|\.mov)$/, "_480p$1");
+        }
+
+        const resolvedUrl = getVideoUrl(targetUrl);
+        videoRef.current.src = resolvedUrl;
+        videoRef.current.load();
+
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current) {
+            videoRef.current.currentTime = currentTimeVal;
+            if (playingVal) {
+              videoRef.current.play().catch(() => { });
+            }
+          }
+        };
+      }
+      setIsSwitchingQuality(false);
+    }, 600);
+  };
+
+  const handleVideoError = () => {
+    if (!activeVideo || !videoRef.current) return;
+
+    if (quality !== "Auto" && quality !== "1080p") {
+      console.warn(`Quality path for ${quality} not found. Falling back to original source.`);
+      const originalUrl = getVideoUrl(activeVideo.url);
+
+      if (videoRef.current.src !== originalUrl) {
+        const currentTimeVal = videoRef.current.currentTime;
+        const playingVal = isPlaying;
+
+        setQuality("Auto");
+        videoRef.current.src = originalUrl;
+        videoRef.current.load();
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current) {
+            videoRef.current.currentTime = currentTimeVal;
+            if (playingVal) {
+              videoRef.current.play().catch(() => { });
+            }
+          }
+        };
+      }
+    }
+  };
 
   // Fullscreen and auto-rotation orientation control logic
   const toggleFullscreen = async () => {
@@ -138,6 +210,7 @@ export default function ProjectCategoryPage({
   }, []);
 
   const handlePlay = (videoSrc: string, title: string) => {
+    setQuality("Auto");
     setActiveVideo({ url: videoSrc, title });
   };
 
@@ -149,6 +222,7 @@ export default function ProjectCategoryPage({
     setIsPlaying(true);
     setHasEnded(false);
     setProgress(0);
+    setQuality("Auto");
     // Exit fullscreen if active when closed
     if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
       try {
@@ -157,7 +231,7 @@ export default function ProjectCategoryPage({
         } else if ((document as any).webkitExitFullscreen) {
           (document as any).webkitExitFullscreen();
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   };
 
@@ -270,10 +344,10 @@ export default function ProjectCategoryPage({
                       onClick={() => handlePlay(project.video!, project.title)}
                       className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
                     >
-                      <div className={`w-16 h-16 rounded-full border-2 ${category.color.replace("text-", "border-")}/40 flex items-center justify-center bg-black/40 group-hover:border-current group-hover:bg-current/10 group-hover:scale-110 transition-all duration-300`}>
-                        <FiPlay className={`text-2xl ml-1 ${category.color}`} />
+                      <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full border-2 ${category.color.replace("text-", "border-")}/40 flex items-center justify-center bg-black/40 group-hover:border-current group-hover:bg-current/10 group-hover:scale-110 transition-all duration-300`}>
+                        <FiPlay className={`text-lg md:text-2xl ml-0.5 md:ml-1 ${category.color}`} />
                       </div>
-                      <span className="mt-3 font-mono text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors tracking-widest">
+                      <span className="mt-2 md:mt-3 font-mono text-[9px] md:text-[10px] text-zinc-500 group-hover:text-zinc-400 transition-colors tracking-widest hidden sm:inline-block">
                         PLAY VIDEO
                       </span>
                     </button>
@@ -310,15 +384,14 @@ export default function ProjectCategoryPage({
                     {project.status}
                   </span>
                 </div>
-
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
-                  <h3 className="font-mono text-sm font-bold text-white mb-1">
+                  <h3 className="font-mono text-xs sm:text-sm font-bold text-white mb-1">
                     {project.title}
                   </h3>
-                  <p className="font-mono text-[11px] text-zinc-400 line-clamp-2">
+                  <p className="font-mono text-[10px] sm:text-[11px] text-zinc-400 line-clamp-1 sm:line-clamp-2">
                     {project.description}
                   </p>
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="flex flex-wrap gap-1 mt-2 hidden sm:flex">
                     {project.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
@@ -394,9 +467,8 @@ export default function ProjectCategoryPage({
 
             {/* Top Right Controls Group */}
             <div
-              className={`absolute top-6 right-6 z-50 flex items-center gap-2 transition-opacity duration-300 ${
-                showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
+              className={`absolute top-6 right-6 z-50 flex items-center gap-2 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
             >
               <button
                 onClick={(e) => {
@@ -421,13 +493,19 @@ export default function ProjectCategoryPage({
 
             {/* Top Left Title and Metadata */}
             <div
-              className={`absolute top-6 left-6 z-50 font-mono text-xs transition-opacity duration-300 pointer-events-none ${
-                showControls ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute top-6 left-6 z-50 font-mono text-xs transition-opacity duration-300 pointer-events-none ${showControls ? "opacity-100" : "opacity-0"
+                }`}
             >
               <div className={category.color}>{activeVideo.title}</div>
               <div className="text-zinc-600 mt-1">{category.title}</div>
             </div>
+
+            {isSwitchingQuality && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 z-30 font-mono pointer-events-auto">
+                <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin mb-3" />
+                <span className="text-xs text-zinc-400">LOADING {quality.toUpperCase()}...</span>
+              </div>
+            )}
 
             <video
               ref={videoRef}
@@ -437,6 +515,7 @@ export default function ProjectCategoryPage({
               muted={isMuted}
               preload="auto"
               onTimeUpdate={handleTimeUpdate}
+              onError={handleVideoError}
               onEnded={() => {
                 setIsPlaying(false);
                 setHasEnded(true);
@@ -445,14 +524,21 @@ export default function ProjectCategoryPage({
                 e.stopPropagation();
                 handleContainerClick();
               }}
+              style={{
+                filter:
+                  quality === "720p"
+                    ? "blur(0.35px) contrast(0.98)"
+                    : quality === "480p"
+                      ? "blur(0.7px) contrast(0.96)"
+                      : "none"
+              }}
               className="w-full h-full object-contain"
             />
 
             {/* Middle Play/Pause Button (YouTube-style Overlay) */}
             <div
-              className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${
-                showControls && !hasEnded ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
+              className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${showControls && !hasEnded ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
             >
               <button
                 onClick={(e) => {
@@ -487,9 +573,8 @@ export default function ProjectCategoryPage({
             {/* Bottom Playback Controls Bar */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className={`absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 ${
-                showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
+              className={`absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
             >
               <div className="max-w-4xl mx-auto">
                 <h3 className="text-xl font-mono font-bold text-white mb-3 hidden md:block">
@@ -539,6 +624,47 @@ export default function ProjectCategoryPage({
                   >
                     {isMuted ? <FiVolumeX className="text-sm" /> : <FiVolume2 className="text-sm" />}
                   </button>
+
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowQualityMenu(!showQualityMenu);
+                        resetControlsTimeout();
+                      }}
+                      className="p-2 rounded border border-zinc-700 bg-zinc-900 hover:border-accent hover:text-accent transition-all text-white cursor-default flex items-center gap-1.5"
+                    >
+                      <FiSettings className={`text-sm ${showQualityMenu ? "text-accent animate-spin" : ""}`} />
+                      <span className="text-[10px] font-mono leading-none">{quality === "Auto" ? "Auto" : quality}</span>
+                    </button>
+
+                    {showQualityMenu && (
+                      <div className="absolute bottom-11 right-0 bg-[#08080c]/95 border border-zinc-800 rounded shadow-2xl p-1.5 min-w-[125px] z-50 flex flex-col font-mono text-xs">
+                        <div className="px-2 py-1 text-[9px] text-zinc-500 uppercase border-b border-zinc-900 mb-1">
+                          Quality
+                        </div>
+                        {[
+                          { label: "Auto", value: "Auto" },
+                          { label: "1080p (HD)", value: "1080p" },
+                          { label: "720p", value: "720p" },
+                          { label: "480p", value: "480p" },
+                        ].map((opt) => (
+                          <button
+                            key={opt.value}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQualityChange(opt.value as any);
+                            }}
+                            className={`px-2 py-1.5 rounded hover:bg-accent/10 hover:text-accent transition-all text-left flex items-center justify-between ${quality === opt.value ? "text-accent font-bold" : "text-zinc-400"
+                              }`}
+                          >
+                            <span>{opt.label}</span>
+                            {quality === opt.value && <FiCheck className="text-xs" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   <button
                     onClick={(e) => {

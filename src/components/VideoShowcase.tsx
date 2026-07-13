@@ -43,10 +43,10 @@ export default function VideoShowcase() {
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="w-24 h-24 rounded-full border-2 border-accent/40 flex items-center justify-center bg-black/40 group-hover:border-accent group-hover:bg-accent/10 group-hover:scale-110 transition-all duration-500">
-            <FiPlay className="text-4xl text-accent ml-2" />
+          <div className="w-14 h-14 md:w-24 md:h-24 rounded-full border-2 border-accent/40 flex items-center justify-center bg-black/40 group-hover:border-accent group-hover:bg-accent/10 group-hover:scale-110 transition-all duration-500">
+            <FiPlay className="text-2xl md:text-4xl text-accent ml-1 md:ml-2" />
           </div>
-          <span className="mt-4 font-mono text-sm text-zinc-500 group-hover:text-accent transition-colors tracking-widest">
+          <span className="mt-2 md:mt-4 font-mono text-[10px] md:text-sm text-zinc-500 group-hover:text-accent transition-colors tracking-widest hidden sm:inline-block">
             PLAY SHOWREEL
           </span>
         </div>
@@ -57,11 +57,11 @@ export default function VideoShowcase() {
           </span>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
-          <h3 className="font-mono text-xl font-bold text-white mb-2">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
+          <h3 className="font-mono text-sm sm:text-xl font-bold text-white mb-1 sm:mb-2">
             Sai Mahesh Nikhil — Showreel 2026
           </h3>
-          <p className="font-mono text-sm text-zinc-400">
+          <p className="font-mono text-[10px] sm:text-sm text-zinc-400">
             3D Modeling • Environment Art • Animation • Level Design
           </p>
         </div>

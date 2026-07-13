@@ -27,6 +27,24 @@ export default function ContactSection() {
   const [isProcessing, setIsProcessing] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleEmailClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText("saimaheshnikhilduddu@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    window.location.href = "mailto:saimaheshnikhilduddu@gmail.com";
+  };
+
+  // Programmatically focus the next input field as the user progresses,
+  // avoiding autofocus scroll triggers on initial portfolio mount.
+  useEffect(() => {
+    if (formStep > 0 && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [formStep]);
 
   const formFields = [
     { key: "name", prompt: "Enter your name" },
@@ -196,8 +214,8 @@ export default function ContactSection() {
         className="mb-10"
       >
         <h2 className="text-3xl md:text-4xl font-bold mb-3 font-mono">
-          <span className="text-accent">Get in</span>
-          <span className="text-white"> Touch</span>
+          <span className="text-accent">Build</span>
+          <span className="text-white"> Hierarchy</span>
         </h2>
         <p className="text-zinc-500 font-mono text-sm ml-4">
           // send a message or start a conversation
@@ -264,21 +282,26 @@ export default function ContactSection() {
                   <span className="text-accent">$</span>
                   <span className="text-zinc-400">ls ./socials/</span>
                 </div>
-                <div className="flex flex-wrap gap-2 pl-4">
+                <div className="flex flex-wrap gap-2 pl-4" onClick={(e) => e.stopPropagation()}>
                   <a
                     href="mailto:saimaheshnikhilduddu@gmail.com"
+                    onClick={handleEmailClick}
                     className="flex items-center gap-2 px-3 py-2 rounded border border-zinc-800 hover:border-accent/50 hover:bg-accent/5 transition-all text-zinc-400 hover:text-accent text-xs"
                   >
-                    <FiMail /> Mail
+                    <FiMail /> {copied ? "Copied!" : "Mail"}
                   </a>
                   <a
                     href="https://www.linkedin.com/in/duddu-sai-mahesh-nikhil/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-2 rounded border border-zinc-800 hover:border-accent/50 hover:bg-accent/5 transition-all text-zinc-400 hover:text-accent text-xs"
                   >
                     <FiLinkedin /> linkedin
                   </a>
                   <a
                     href="https://www.artstation.com/d_sai_mahesh_nikhil"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-2 rounded border border-zinc-800 hover:border-accent/50 hover:bg-accent/5 transition-all text-zinc-400 hover:text-accent text-xs"
                   >
                     <SiArtstation /> Art Station
@@ -359,7 +382,6 @@ export default function ContactSection() {
                     onKeyDown={handleKeyDown}
                     className="flex-1 bg-transparent outline-none text-white caret-accent font-mono"
                     placeholder="Type 'new' to start..."
-                    autoFocus
                     disabled={isProcessing}
                   />
                 </div>
@@ -374,7 +396,6 @@ export default function ContactSection() {
                     onChange={(e) => setCurrentInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     className="flex-1 bg-transparent outline-none text-white caret-accent font-mono"
-                    autoFocus
                     disabled={isProcessing}
                   />
                 </div>
@@ -389,7 +410,6 @@ export default function ContactSection() {
                     onChange={(e) => setCurrentInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     className="flex-1 bg-transparent outline-none text-white caret-accent font-mono"
-                    autoFocus
                     disabled={isProcessing}
                     placeholder="send or cancel..."
                   />

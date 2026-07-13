@@ -24,7 +24,7 @@ export const categories: ProjectCategory[] = [
     id: "unreal",
     title: "3D-Short films",
     description: "3D Short films and animations",
-    icon: "",
+    icon: "3D",
     color: "text-blue-400",
     projectCount: 6,
     projects: [
@@ -88,7 +88,7 @@ export const categories: ProjectCategory[] = [
     id: "Unity",
     title: "Game Animations",
     description: "Game Animations for VR Games.",
-    icon: "",
+    icon: "GM",
     color: "text-accent",
     projectCount: 3,
     thumbnail: "/images/game-animations.jpg",
@@ -123,7 +123,7 @@ export const categories: ProjectCategory[] = [
     id: "rigging",
     title: "Mocap Animations",
     description: "Character Mocap Works",
-    icon: "",
+    icon: "MC",
     color: "text-orange-400",
     projectCount: 2,
     projects: [
@@ -151,7 +151,7 @@ export const categories: ProjectCategory[] = [
     id: "Storytelling",
     title: "Storytelling",
     description: "Storytelling and cinematic works.",
-    icon: "",
+    icon: "ST",
     color: "text-red-400",
     projectCount: 3,
     projects: [
@@ -188,7 +188,7 @@ export const categories: ProjectCategory[] = [
     id: "LevelDesign",
     title: "Level Design",
     description: "Level design works.",
-    icon: "",
+    icon: "LD",
     color: "text-violet-400",
     projectCount: 3,
     projects: [
@@ -225,7 +225,7 @@ export const categories: ProjectCategory[] = [
     id: "ShortContents",
     title: "Short Contents",
     description: "Short Content works.",
-    icon: "",
+    icon: "SC",
     color: "text-cyan-400",
     projectCount: 3,
     projects: [
