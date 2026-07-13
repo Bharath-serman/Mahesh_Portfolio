@@ -121,8 +121,8 @@ export const categories: ProjectCategory[] = [
   },
   {
     id: "rigging",
-    title: "Game character Animation",
-    description: "Character rigs & animation work",
+    title: "Mocap Animations",
+    description: "Character Mocap Works",
     icon: "",
     color: "text-orange-400",
     projectCount: 2,

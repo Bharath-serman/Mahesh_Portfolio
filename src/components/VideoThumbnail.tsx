@@ -25,12 +25,16 @@ export default function VideoThumbnail({
     const handleSeeked = () => {
       const canvas = canvasRef.current;
       if (!canvas || !video) return;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        setThumbnail(canvas.toDataURL("image/jpeg", 0.8));
+      try {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          setThumbnail(canvas.toDataURL("image/jpeg", 0.8));
+        }
+      } catch (err) {
+        console.warn("Failed to generate canvas thumbnail, falling back to native video tag:", err);
       }
     };
 
@@ -51,6 +55,7 @@ export default function VideoThumbnail({
         preload="metadata"
         playsInline
         muted
+        crossOrigin="anonymous"
         className="hidden"
       />
       <canvas ref={canvasRef} className="hidden" />
@@ -61,7 +66,15 @@ export default function VideoThumbnail({
           className={`absolute inset-0 w-full h-full object-cover ${className}`}
         />
       ) : (
-        <div className={`absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800 ${className}`} />
+        <div className={`absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800 overflow-hidden ${className}`}>
+          <video
+            src={`${getVideoUrl(videoSrc)}#t=0.5`}
+            preload="metadata"
+            playsInline
+            muted
+            className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${className}`}
+          />
+        </div>
       )}
     </>
   );
