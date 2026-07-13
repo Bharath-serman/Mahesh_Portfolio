@@ -7,9 +7,9 @@
 export function getVideoUrl(path: string | undefined): string {
   if (!path) return "";
   
-  // If the path is already a remote URL, return it directly
+  // If the path is already a remote URL, wrap it in our proxy API
   if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
+    return `/api/video?url=${encodeURIComponent(path)}`;
   }
   
   const baseUrl = process.env.NEXT_PUBLIC_ASSETS_BASE_URL;
@@ -19,7 +19,8 @@ export function getVideoUrl(path: string | undefined): string {
     if (fileName) {
       // GitHub Releases replace spaces with dots in download URLs
       const encodedFileName = fileName.replace(/ /g, ".");
-      return `${baseUrl.replace(/\/$/, "")}/${encodedFileName}`;
+      const remoteUrl = `${baseUrl.replace(/\/$/, "")}/${encodedFileName}`;
+      return `/api/video?url=${encodeURIComponent(remoteUrl)}`;
     }
   }
 

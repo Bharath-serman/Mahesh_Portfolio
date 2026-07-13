@@ -56,7 +56,7 @@ export default function VideoThumbnail({
         playsInline
         muted
         crossOrigin="anonymous"
-        className="hidden"
+        className="absolute w-px h-px opacity-0 pointer-events-none overflow-hidden"
       />
       <canvas ref={canvasRef} className="hidden" />
       {thumbnail ? (
@@ -68,8 +68,8 @@ export default function VideoThumbnail({
       ) : (
         <div className={`absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800 overflow-hidden ${className}`}>
           <video
-            src={`${getVideoUrl(videoSrc)}#t=0.5`}
-            preload="metadata"
+            src={`${getVideoUrl(videoSrc)}#t=0.001`}
+            preload="auto"
             playsInline
             muted
             className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${className}`}
