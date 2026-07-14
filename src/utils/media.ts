@@ -1,34 +1,33 @@
 /**
  * Resolves a video path to its final URL.
- * In development (locally), it uses the local /videos path.
- * In production (deployed), if NEXT_PUBLIC_ASSETS_BASE_URL is set,
- * it points to the remote host (e.g. GitHub Releases).
+ *
+ * - In production: returns a direct Cloudflare R2 CDN URL (no proxy, globally fast).
+ * - In development: falls back to local /videos path.
+ *
+ * Filenames are properly URL-encoded so spaces and special characters
+ * work correctly across all browsers and platforms.
  */
 export function getVideoUrl(path: string | undefined): string {
   if (!path) return "";
-  
-  // If the path is already a remote URL, wrap it in our proxy API
+
+  // Already a full URL — return as-is (no double-encoding)
   if (path.startsWith("http://") || path.startsWith("https://")) {
-    return `/api/video?url=${encodeURIComponent(path)}`;
+    return path;
   }
-  
+
   const baseUrl = process.env.NEXT_PUBLIC_ASSETS_BASE_URL;
   if (baseUrl) {
-    // Extract the filename (e.g., "/videos/dreams-to-reality.mp4" -> "dreams-to-reality.mp4")
+    // Extract just the filename from the path
+    // e.g. "/videos/Blood in the Basement.mp4" → "Blood in the Basement.mp4"
     const fileName = path.split("/").pop();
     if (fileName) {
-      // GitHub Releases replace spaces with dots in download URLs
-      const encodedFileName = fileName.replace(/ /g, ".");
-      const remoteUrl = `${baseUrl.replace(/\/$/, "")}/${encodedFileName}`;
-      return `/api/video?url=${encodeURIComponent(remoteUrl)}`;
+      // encodeURIComponent handles spaces (%20) and all special characters
+      // so URLs like "Blood%20in%20the%20Basement.mp4" work on every platform
+      const encodedFileName = encodeURIComponent(fileName);
+      return `${baseUrl.replace(/\/$/, "")}/${encodedFileName}`;
     }
   }
 
-  // In development, always use local files
-  if (process.env.NODE_ENV === "development") {
-    return path.startsWith("/") ? path : `/${path}`;
-  }
-  
-  // Default to the local path (ensuring it starts with a leading slash)
+  // Local development — serve from /public/videos/
   return path.startsWith("/") ? path : `/${path}`;
 }

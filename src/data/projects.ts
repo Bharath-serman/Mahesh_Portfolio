@@ -79,7 +79,7 @@ export const categories: ProjectCategory[] = [
         description:
           "A scenic cinematic third-person view of a character exploring a vast medieval castle estate.",
         tags: ["Unreal Engine", "Cinematics", "shortcontent"],
-        video: "/videos/Medieval Era Exploration.mp4",
+        video: "/videos/Medieval Era Exploration_.mp4",
         status: "COMPLETED",
       },
     ],

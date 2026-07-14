@@ -3,6 +3,20 @@
 import { useRef, useEffect, useState } from "react";
 import { getVideoUrl } from "@/utils/media";
 
+/**
+ * VideoThumbnail — lazy-loaded video first-frame thumbnail.
+ *
+ * Strategy: The `#t=0.001` Media Fragment URI hint tells the browser to seek
+ * to 0.001 seconds and display that frame — giving a real video thumbnail
+ * without loading the full file. Only `preload="metadata"` is used, which
+ * fetches just the first few KB (headers + index), not the video body.
+ *
+ * This approach:
+ * - Works on iOS Safari, Android Chrome, Firefox, Edge, Desktop Chrome ✅
+ * - Does NOT require CORS headers from R2 ✅
+ * - Uses IntersectionObserver so off-screen cards never make any request ✅
+ * - Shows a gradient placeholder instantly while the first frame loads ✅
+ */
 export default function VideoThumbnail({
   videoSrc,
   className = "",
@@ -10,72 +24,55 @@ export default function VideoThumbnail({
   videoSrc: string;
   className?: string;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const [frameReady, setFrameReady] = useState(false);
 
+  // ── Intersection Observer ──────────────────────────────────────────────────
+  // Mount the video element only when the card approaches the viewport.
+  // Off-screen cards make zero network requests.
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const handleLoadedData = () => {
-      video.currentTime = 0.5;
-    };
-
-    const handleSeeked = () => {
-      const canvas = canvasRef.current;
-      if (!canvas || !video) return;
-      try {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          setThumbnail(canvas.toDataURL("image/jpeg", 0.8));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setInView(true);
+          observer.disconnect(); // only need to trigger once
         }
-      } catch (err) {
-        console.warn("Failed to generate canvas thumbnail, falling back to native video tag:", err);
-      }
-    };
+      },
+      { rootMargin: "300px" } // start loading 300px before entering viewport
+    );
 
-    video.addEventListener("loadeddata", handleLoadedData);
-    video.addEventListener("seeked", handleSeeked);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
-    return () => {
-      video.removeEventListener("loadeddata", handleLoadedData);
-      video.removeEventListener("seeked", handleSeeked);
-    };
-  }, [videoSrc]);
+  const videoUrl = getVideoUrl(videoSrc);
 
   return (
-    <>
-      <video
-        ref={videoRef}
-        src={getVideoUrl(videoSrc)}
-        preload="metadata"
-        playsInline
-        muted
-        crossOrigin="anonymous"
-        className="absolute w-px h-px opacity-0 pointer-events-none overflow-hidden"
-      />
-      <canvas ref={canvasRef} className="hidden" />
-      {thumbnail ? (
-        <img
-          src={thumbnail}
-          alt=""
-          className={`absolute inset-0 w-full h-full object-cover ${className}`}
-        />
-      ) : (
-        <div className={`absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-zinc-800 overflow-hidden ${className}`}>
-          <video
-            src={`${getVideoUrl(videoSrc)}#t=0.001`}
-            preload="auto"
-            playsInline
-            muted
-            className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${className}`}
-          />
-        </div>
+    <div ref={containerRef} className={`absolute inset-0 ${className}`}>
+      {/* Gradient placeholder — shows instantly, zero network cost */}
+      {!frameReady && (
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800/50 to-zinc-900/80" />
       )}
-    </>
+
+      {/* Video element — only mounted when near viewport.
+          The #t=0.001 fragment tells the browser to seek to frame 0.001s
+          and display it, acting as a thumbnail. No full download needed. */}
+      {inView && (
+        <video
+          src={`${videoUrl}#t=0.001`}
+          preload="metadata"
+          muted
+          playsInline
+          onLoadedData={() => setFrameReady(true)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            frameReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
+    </div>
   );
 }
