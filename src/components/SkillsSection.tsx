@@ -124,7 +124,9 @@ function SkillModule({
         </span>
         <div className="flex items-center gap-1.5">
           <span className={`w-1.5 h-1.5 rounded-full ${statusColor} animate-pulse`} />
-          <span className="font-mono text-[9px] text-zinc-600">ACTIVE</span>
+ 
+          <span className="font-mono text-[9px] text-zinc-600"></span>      {/*Status_Description */}
+
         </div>
       </div>
 
